@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <string.h>
+
+#define SIZE 10
+
+int ip(char sym) {
+    switch (sym) {
+        case '+':
+        case '-': return 1;
+        case '*':
+        case '/':
+        case '%': return 3;
+        case '$':
+        case '^': return 6;
+        case '(': return 9; 
+        case ')': return 0; 
+        default: return -1; 
+    }
+}
+
+int sp(char sym) {
+    switch (sym) {
+        case '+':
+        case '-': return 2;
+        case '*':
+        case '/':
+        case '%': return 4;
+        case '$':
+        case '^': return 5;
+        case '(': return 0; 
+        case '#': return -1; 
+        default: return 8;
+    }
+}
+
+void infix_postfix(char infix[SIZE], char postfix[SIZE]) {
+    char st[SIZE], symbol;
+    int i, j = 0, top = -1;
+
+    st[++top] = '#'; 
+
+    for (i = 0; i < strlen(infix); i++) {
+        symbol = infix[i]; 
+
+        if (symbol >= 'a' && symbol <= 'z' || symbol >= 'A' && symbol <= 'Z') {
+            postfix[j++] = symbol;
+        }
+        else if (symbol == '(') {
+            st[++top] = symbol;
+        }
+        
+        else if (symbol == ')') {
+            while (st[top] != '(') {
+                postfix[j++] = st[top--];
+            }
+            top--; 
+        }
+        
+        else {
+            while (sp(st[top]) >= ip(symbol)) {
+                postfix[j++] = st[top--]; 
+            }
+            st[++top] = symbol; 
+        }
+    }
+
+    while (st[top] != '#') {
+        postfix[j++] = st[top--];
+    }
+    postfix[j] = '\0'; 
+}
+
+int main() {
+    char infix[SIZE], postfix[SIZE];
+    printf("Enter a valid infix expression:\n");
+    scanf("%s", infix);
+    
+    infix_postfix(infix, postfix);
+
+    printf("Postfix expression is:\n%s\n", postfix);
+    return 0;
+}
