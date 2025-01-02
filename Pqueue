@@ -1,0 +1,121 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    int priority;
+    struct node *link;
+};
+
+typedef struct node *NODE;
+
+NODE getnode(void) {
+    NODE x;
+    x = (NODE)malloc(sizeof(struct node));
+    if (x == NULL) {
+        printf("\nOut of memory");
+        exit(0);
+    }
+    return x;
+}
+
+NODE insert_priority(NODE first) {
+    int val, pri;
+    NODE temp, cur, prev;
+    
+    printf("\nEnter the value: ");
+    scanf("%d", &val);
+    printf("\nEnter the priority: ");
+    scanf("%d", &pri);
+    
+    temp = getnode();
+    temp->data = val;
+    temp->priority = pri;
+    temp->link = NULL;
+
+  
+    if (first == NULL || pri < first->priority) {
+        temp->link = first;
+        first = temp;
+        return first;
+    }
+
+    prev = NULL;
+    cur = first;
+    while (cur != NULL && cur->priority <= pri) {
+        prev = cur;
+        cur = cur->link;
+    }
+
+    prev->link = temp;
+    temp->link = cur;
+
+    return first;
+}
+NODE delete(NODE first) {
+    NODE temp;
+    
+    if (first == NULL) {
+        printf("\nQUEUE UNDERFLOW");
+        return NULL;
+    }
+    
+    temp = first;
+    printf("\nDeleted item is: %d", temp->data);
+    first = first->link;  
+    free(temp);           
+    
+    return first;
+}
+
+void display(NODE first) {
+    NODE temp;
+    
+    if (first == NULL) {
+        printf("\nQUEUE IS EMPTY");
+        return;
+    }
+    
+    printf("\nTHE CONTENTS OF PRIORITY QUEUE ARE: ");
+    temp = first;
+    while (temp != NULL) {
+        printf("\n%d [priority=%d]", temp->data, temp->priority);
+        temp = temp->link;
+    }
+}
+
+int main() {
+    NODE first = NULL;
+    int option;
+
+    do {
+        printf("\n***** MAIN MENU *****");
+        printf("\n1. INSERT");
+        printf("\n2. DELETE");
+        printf("\n3. DISPLAY");
+        printf("\n4. EXIT");
+        printf("\nEnter your option: ");
+        scanf("%d", &option);
+        
+        switch (option) {
+            case 1:
+                first = insert_priority(first); // Insert new node based on priority
+                break;
+            case 2:
+                first = delete(first); // Delete the node from the queue
+                break;
+            case 3:
+                display(first); // Display the queue
+                break;
+            case 4:
+                printf("\nExiting the program.\n");
+                break;
+            default:
+                printf("\nInvalid option! Please try again.\n");
+                break;
+        }
+    } while (option != 4);
+
+    return 0;
+}
